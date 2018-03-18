@@ -1,11 +1,32 @@
 # CONFIGURING CEPH
-...
+Ceph 서비스를 시작했다면, 초기 프로세스는 여러 데몬을 백그라운드에서 실행시킵니다. Ceph Storage Cluster 는 세가지 타입의 데몬을 실행합니다.
+
+- Ceph Monitor (ceph-mon)
+- Ceph Manager (ceph-mgr)
+- Ceph OSD Daemon (ceph-osd)
+
+Ceph filesystem 을 지원하는 Ceph Storage Cluster 는 적어도 하나의 Ceph Metadata Server (ceph-mds) 를 실행합니다. Ceph Object Storage 를 지원하는 클러스터는 Ceph Gateway daemons (radosgw) 를 실행합니다.
+
+각각의 데몬은 기본값으로 되어 있는 여러 설정 옵션들이 있으며, 이런 설정 옵션들을 변경함으로서 적절한 행동을 취할 수 있습니다.
 
 ## OPTION NAMES
-...
+모든 Ceph 설정 옵션들은 underscore(_)로 이어져 소문자로 이루어진 unique한 이름을 가지고 있습니다.
+
+옵션의 이름이 커맨드라인에서 쓰여질 때에는, underscore(_) 와 대시 (-)는 같은 것으로 간주됩니다. ( --mon-host 와 --mon_host 는 같습니다. )
+
+설정 파일에서 옵션 이름이 나타날 때는,공백은  마찬가지로 underscore 나 dash 로 사용될 수 있습니다.
 
 ## CONFIG SOURCES
-...
+각각의 Ceph  데몬, 프로세스와 라이브러리는 아래의 여러 소스들로부터 설정을 가져옵니다. 리스트 아래에 있는 항목들이 위에 있는 항목들을 덮어쓸 수 있습니다.
+
+- compiled-in 기본 값
+- 모니터 클러스터의 설정 데이터베이스
+- 로컬 호스트에 있는 설정 파일
+- 환경변수
+- 커맨드라인 arguments
+- 관리자가 셋팅한 런타임 오버라이드
+
+이러한 것들로부터 Ceph 프로세스는 설정 옵션들을 가져옵니다. 프로세스는 이후에 모니터 클러스터에게 전체 클러스터를 위한 설정을 알립니다. 완료되면, 데몬이나 프로세스가 진행되게 됩니다.
 
 ## CONFIGURATION SECTIONS
 모든 주어진 프로세스 또는 데몬은 각 구성 옵션에 대해 단일 값을가집니다. 그러나, 옵션에 대한 값은 동일한 유형의 데몬에서도 서로 달라질 수 있습니다. MON 설정 데이터베이스나 로컬 설정파일의 Ceph 옵션들은 어떤 데몬이나 클라이언트에 적용되어질지에 따라 다른 섹션에 존재합니다.
@@ -110,25 +131,4 @@ Ceph 설정파일은 `ini` 스타일을 따릅니다. 샵(`#`) 이나 세미콜�
 - `ceph config dump` 는 클러스터의 모든 설정 데이터베이스를 dump 하여 보여줍니다.
 - `ceph config get <who>` 는 특정한 데몬이나 클라이언트의 설정을 보여줍니다. (ex, `mds`)
 - `ceph config set <who> <option> <value>` 는 모니터 설정 데이터베이스에 설정을 세팅합니다.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.
+- `ceph config show <who>` 는 실행 중인 데몬의 설정을 보여줍니다.
