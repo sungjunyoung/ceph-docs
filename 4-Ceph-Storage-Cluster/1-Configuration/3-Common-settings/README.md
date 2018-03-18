@@ -13,10 +13,10 @@ mon_host = 10.0.0.1
 
 > **중요**: host 세팅은 노드의 IP 어드레스가 아닌 노드의 짧은 이름입니다. `hostame -s` 커맨드를 입력하여 노드의 이름을 알아낼 수 있습니다. Ceph를 수동으로 배포하지 않는 한 초기 모니터 이외의 다른 설정에는 호스트 설정을 사용하지 마십시오. `chef` 혹은 `ceph-deploy` 같은 배포 툴에서 이 툴들이 클러스터 맵에 적절한 값으로 들어갈 수 있도록 툴을 사용할 때 호스트 특정하면 안됩니다. (?)
 
-### NETWORKS
+## NETWORKS
 Ceph 을 사용하기 위한 디테일한 정보를 보려면, [Network Configuration Reference](http://docs.ceph.com/docs/master/rados/configuration/network-config-ref) 를 참고합니다.
 
-### MONITORS
+## MONITORS
 Ceph 의 프로덕션 클러스터는 높은 가용성을 위해 적어도 3개의 Ceph Monitor 데몬으로 배포합니다. 적어도 세개의 모니터가 있어야 `Paxos` 알고리즘이 쿼럼 내의 모니터들 중 가장 최근의 Ceph Cluster Map 을 결정할 수 있습니다.
 > Note: 한개의 모니터로 Ceph 을 배포할 수는 있지만, 해당 인스턴스가 망가지면, 데이터 가용성에 인터럽트가 발생할 것입니다.
 
@@ -36,7 +36,7 @@ mon addr = 150.140.130.120:6789
 ```
 추가적인 설명으로는, [Monitor Config Reference](http://docs.ceph.com/docs/master/rados/configuration/mon-config-ref) 를 참고합니다.
 
-### AUTHENTICATION
+## AUTHENTICATION
 Bobtail (v 0.56) 이하 버전에는, Ceph Configuration file 의 `[global]` 섹션에 직접적으로 써주어야 합니다.
 ```
 auth cluster required = cephx
@@ -48,7 +48,7 @@ auth client required = cephx
 
 > **중요**: 업그레이드를 진행할 때, 수행 전 authentication 을 끄는 것을 추천합니다. 업그레이드 완료 후에 다시 enable 해주세요
 
-### OSDS
+## OSDS
 Ceph 의 프로덕션 클러스터는 일반적으로 하나의 노드가 하나의 스토리지 드라이브에 filestore를 실행하는 하나의 OSD 데몬을 갖는 Ceph OSD 데몬을 배포합니다. 일반적인 배포는 journal size 를 상세합니다. 예를 들어,
 ```
 [osd]
@@ -76,13 +76,13 @@ sudo mount -o user_xattr /dev/{hdd} /var/lib/ceph/osd/ceph-{osd-number}
 
 디테일한 설정들은 [OSD Config Reference](http://docs.ceph.com/docs/master/rados/configuration/osd-config-ref) 를 참고하세요.
 
-### HEARTBEATS
+## HEARTBEATS
 런타임 시에, Ceph OSD 데몬들은 다른 OSD 데몬들을 체크하고, 정보들을 Ceph Monitor 에게 전달합니다. 다른 세팅을 제공할 필요는 없습니다. 그러나, network latency 문제를 겪고 있다면, 세팅을 수정하고 싶어할 수 있습니다. 이에 관한 정보들은, [Configuring Monitor/OSD Interaction](http://docs.ceph.com/docs/master/rados/configuration/mon-osd-interaction) 를 참고하세요.
 
-### LOGS / DEBUGGING
+## LOGS / DEBUGGING
 가끔 로그를 수정하거나, Ceph 의 디버깅 모드를 사용해야 할 때가 있을 수 있습니다. [Debugging and Logging](http://docs.ceph.com/docs/master/rados/troubleshooting/log-and-debug) 을 참고하세요.
 
-### EXAMPLE CEPH.CONF
+## EXAMPLE CEPH.CONF
 ```
 [global]
 fsid = {cluster-id}
@@ -117,7 +117,7 @@ osd pool default pgp num = {n}
 osd crush chooseleaf type = {n}
 ```
 
-### RUNNING MULTIPLE CLUSTERS
+## RUNNING MULTIPLE CLUSTERS
 동일한 하드웨어에서 다중의 Ceph Cluster 를 운영할 수 있습니다. 이는 같은 클러스터에서 다른 pool 을 이용하는 것 보다 높은 수준의 고립을 제공합니다. 분리된 클러스터는 분리된 monitor, OSD 와 metadata 서버 프로세스를 가집니다. 기본값으로 Ceph 을 실행할 때, ceph cluster 의 기본값 이름은 `ceph` 입니다. 이는 `/etc/ceph` 기본 디렉토리 안에 `ceph.conf` 라는 Ceph 설정 파일을 저장했다는 뜻입니다.
 
 추가적인 정보는 [ceph-deploy new](http://docs.ceph.com/docs/master/rados/deployment/ceph-deploy-new/#naming-a-cluster) 를 참고하세요.
