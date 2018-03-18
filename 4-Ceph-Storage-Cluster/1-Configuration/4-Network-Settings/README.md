@@ -107,18 +107,103 @@ Ceph 은 모든 데몬에 적용되는 하나의 네트워크 설정 요구사�
 > **2 개의 네트워크 클러스터에서 하나의 NIC OSD**  
 > 일반적으로 두 개의 네트워크가있는 클러스터에 단일 NIC가있 는 OSD 호스트를 배포하지 않는 것이 좋습니다. 그러나 Ceph 구성 파일의 [osd.n] 섹션에 public addr 항목을 추가하여 OSD 호스트가 public 네트워크에서 작동하도록 강제 할 수 있습니다. 여기서 n은 하나의 NIC가 있는 OSD 번호입니다. 또한 public 네트워크와 cluster 네트워크는 트래픽을 서로 라우팅 할 수 있어야하며 보안상의 이유로 권장하지 않습니다.
 
+## NETWORK CONFIG SETTINGS
+네트워크 구성 설정은 필수는 아닙니다. Ceph는 특별히 cluster 네트워크를 구성하지 않는 한 모든 호스트가 작동하는 public 네트워크를 사용합니다.
 
+### PUBLIC NETWORK
+public 네트워크 설정은 public 네트워크를 위하여 IP 주소와 서브넷을 지정하도록 합니다. 특정 데몬에 대한 `public addr` 설정을 사용하여 정적 IP 주소를 지정하거나 public 네트워크 설정을 무시할 수 있습니다.
+- public network
+  - Description: public(front-side) 네트워크의 IP 주소와 넷마스크 (ex, 192.168.0.0/24), `[global]` 섹션에 설정
+  - Type: `{ip-address}/{netmask}` [, `{ip-address}/{netmask}`]
+  - Required: No
+  - Default: N/A
+- public addr
+  - Description: 각 데몬에 대한 public(front-side) 네트워크의 IP 주소
+  - Type: IP Address
+  - Required: No
+  - Default: N/A
 
+### CLUSTER NETWORK
+cluster 네트워크 구성을 사용하면 cluster 네트워크를 선언하고 특히 cluster 네트워크의 IP 주소와 서브넷을 정의 할 수 있습니다. 특정 OSD 데몬에 대한 `cluster addr` 설정을 사용하여 정적 IP 주소를 지정하거나 cluster 네트워크 설정을 무시할 수 있습니다.
 
+- cluster network
+  - Description: cluster(back-side) 네트워크의 IP 주소와 넷마스크 (ex, 10.0.0.0/24), `[global]` 섹션에 설정
+  - Type: `{ip-address}/{netmask}` [, `{ip-address}/{netmask}`]
+  - Required: No
+  - Default: N/A
+- cluster addr
+  - Description: 각 데몬에 대한 cluster(back-side) 네트워크의 IP 주소
+    - Type: IP Address
+    - Required: No
+    - Default: N/A
 
+### BIND
+Bind 세팅은 기존의 Ceph OSD 와 MDS 가 사용하는 포트의 범위를 변경합니다. 기본값은 6800:7300 입니다. 설정된 포트 범위를 사용하기 위해 IP Tables 가 허가되어 있는지 확인하십시오.
 
+IPv4 주소 대신에 IPv6 주소를 바인딩하도록 설정할 수도 있습니다.
 
+- ms bind port min
+  - Description: OSD 와 MDS 데몬이 바인드할 최소 포트 번호
+  - Type: 32-bit Integer
+  - Default: 6800
+  - Required: No
+- ms bind port max
+  - Description: OSD 와 MDS 데몬이 바인드할 최대 포트 번호
+  - Type: 32-bit Integer
+  - Default: 7300
+  - Required: No
+- ms bind ipv6
+  - Description: Ceph 데몬들이 IPv6 주소에 바인드하도록 설정. IPv4 주소 체계와 동시에 사용할 수는 없습니다.
+  - Type: Boolean
+  - Default: false
+  - Required: No
+- public bind addr
+  - Description: 몇몇 동적 배포에서는, Ceph MON 데몬은 다른 피어에게 알려지는 `public addr` 과는 다른 IP 주소를 로컬로 바인딩 할 수 있습니다. 라우팅 룰이 올바른 것이 확인되어야 합니다. 만약 `public bind addr` 이 지정되었다면, Ceph MON 데몬은 그것에 로컬로 바인딩되고, monmap 에서 `public addr`을 사용할 것입니다. 이 행동은 MON 데몬에만 국한됩니다.
+  - Type: IP Address
+  - Default: No
+  - Required: N/A
 
+### HOSTS
+Ceph 은 적어도 하나의 모니터가 각각 `mon addr` 세팅을 가지고 Ceph 설정 파일에 선언되어 있다고 가정합니다. 또한 `host` 세팅이 모든 데몬의 설정에 있다고 가정합니다. 필요에 따라 모니터에 우선 순위를 할당 할 수 있으며 클라이언트는 지정된 경우 더 낮은 우선 순위 값으로 항상 모니터에 연결합니다.
 
+- mon addr
+  - Description: 클라이언트가 모니터에 연결하기 위해 사용할 수 있는 주소의 리스트 ({hostname}:{port}). 만약 지정되지 않으면, Ceph 은 `[mon.*]` 섹션을 탐색합니다.
+  - Type: String
+  - Required: No
+  - Default: N/A
+- mon priority
+  - Description: 선언된 모니터의 우선순위. 작은 숫자일수록 클라이언트가 클러스터로 연결할 때 선호됩니다.
+  - Type: Unsigned 16-bit Integer
+  - Required: No
+  - Default: 0
+- host
+  - Description: 특정 데몬 인스턴스를 위해 사용하는 hostname
+  - Type: String
+  - Required: 데몬 인스턴스를 위해 필수
+  - Default: localhost
 
+> **Tip**: Localhost 를 사용하지 마십시오. hostname 을 얻기 위해서, `hostname -s` 명령어를 사용하십시오
 
+> **Important**: 다른 배포 툴을 사용할 때에는 host 를 지정해서는 안됩니다.
 
+### TCP
+기본값으로 Ceph 은 TCP 버퍼링을 disable 합니다.
 
+- ms tcp nodelay
+  - Description: Ceph 은 기본값으로 각각의 요청을 즉각적으로 보내기 위해 `ms tcp nodelay` 를 활성화시킵니다. 작은 패킷의 많은 양이 중요해질 때에는, 이 옵션을 비활성화 시키십시오.
+  - Type: Boolean
+  - Required: No
+  - Default: true
+- ms tcp rcvbuf
+  - Description: 네트워크 커넥션의 마지막에 받는 소켓 버퍼의 사이즈
+  - Type: 32-bit Integer
+  - Required: No
+  - Default: 0
+- ms tcp read timeout
+- Description: 클라이언트나 데몬이 다른 Ceph 데몬에게 요청을 보내고, 필요없는 커넥션을 버리지 않는다면, `ms tcp read timeout` 은 몇초 뒤에 커넥션을 최적화 시킬 것입니다.
+- Type: Unsigned 64-bit Integer
+- Required: No
+- Default: 900 15 minutes
 
 
 
