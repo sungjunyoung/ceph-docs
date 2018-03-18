@@ -131,4 +131,125 @@ Ceph 설정파일은 `ini` 스타일을 따릅니다. 샵(`#`) 이나 세미콜�
 - `ceph config dump` 는 클러스터의 모든 설정 데이터베이스를 dump 하여 보여줍니다.
 - `ceph config get <who>` 는 특정한 데몬이나 클라이언트의 설정을 보여줍니다. (ex, `mds`)
 - `ceph config set <who> <option> <value>` 는 모니터 설정 데이터베이스에 설정을 세팅합니다.
-- `ceph config show <who>` 는 실행 중인 데몬의 설정을 보여줍니다.
+- `ceph config show <who>` 는 실행 중인 데몬의 설정을 보여줍니다. 이러한 설정은 사용 중인 로컬 구성 파일이 있거나 커맨드라인이나 런타임에서 옵션이 재정의된 경우 모니터에 저장된 설정과 다를 수 있습니다. 설정 값의 일부가 출력됩니다.
+- `ceph config assimilate-conf -i <input file> -o <output file>` 는 입력 파일에서 구성 파일을 손상시키고(?) 유효한 옵션을 모니터의 구성 데이터베이스로 이동합니다. 모니터가 컨트롤하지 못하거나, 잘못된 설정들은 output 파일로 저장됩니다. 이 커맨드는 중앙화된 모니터 베이스의 설정으로 기존 설정 파일들을 옮기는 데 유용합니다.
+
+### HELP
+특정한 옵션의 사용법을 다음의 명령어로 얻을 수 있습니다.
+```
+ceph config help <option>
+```
+실행 중인 모니터애 컴파일된 설정 스키마를 사용합니다. 만약 혼재된 버전의 클러스터를 사용한다면, (ex, 업그레이드 중) 특정한 실행 중인 데몬으로부터 설정 스키마를 쿼리할 수 있습니다.
+```
+ceph daemon <name> config help [option]
+```
+예를 들어,
+```
+$ ceph config help log_file
+log_file - path to log file
+  (std::string, basic)
+  Default (non-daemon):
+  Default (daemon): /var/log/ceph/$cluster-$name.log
+  Can update at runtime: false
+  See also: [log_to_stderr,err_to_stderr,log_to_syslog,err_to_syslog]
+```
+혹은,
+```
+$ ceph config help log_file -f json-pretty
+{
+    "name": "log_file",
+    "type": "std::string",
+    "level": "basic",
+    "desc": "path to log file",
+    "long_desc": "",
+    "default": "",
+    "daemon_default": "/var/log/ceph/$cluster-$name.log",
+    "tags": [],
+    "services": [],
+    "see_also": [
+        "log_to_stderr",
+        "err_to_stderr",
+        "log_to_syslog",
+        "err_to_syslog"
+    ],
+    "enum_values": [],
+    "min": "",
+    "max": "",
+    "can_update_at_runtime": false
+}
+```
+`level` 옵션은 `basic`, `advanced`, `dev` 가 될 수 있습니다. `dev` 옵션은 개발자를 위해 사용되고, 일반적으로 테스트 목적으로 사용합니다. 그리고 operator 에 의해 사용하는 것을 권장하지 않습니다.
+
+### RUNTIME CHANGE
+대부분의 경우에서, Ceph 은 런타임에서 설정을 바꿀 수 있습니다. 로그 아웃풋을 늘리거나, 줄일 때, 디버그 세팅을 켜거나 끌때, 심지어 런타임 최적화까지 유용하게 사용할 수 있습니다. 일반적으로, 설정 옵션들은 `ceph config set ` 명령을 통해서 업데이트 할 수 있습니다. 예를 들어, 특정한 OSD 데몬의 로그 레벨을 debug 로 변경하려면:
+```
+ceph config set osd.123 debug_ms 20
+```
+만약 로컬 설정 파일에서 같은 옵션을 커스터마이즈 했다면, 모니터 셋팅은 무시될 수 있습니다. (이 명령어는 로컬 설정 파일보다 낮은 우선순위를 가집니다.)
+
+#### OVERRIDE VALUES
+일시적으로 Ceph CLI 를 통해서 설정을 변경할 수도 있습니다. 이는 실행 중인 프로세스에만 영향을 미치며, 재시작 시 초기화 될 수 있습니다.
+
+값을 덮어쓰는 것은 다음의 두가지 방법으로 할 수 있습니다.
+
+1. 아무 호스트에서 네트워크를 통해서 데몬에게 메시지를 보낼 수 있습니다.
+  ```
+  ceph tell <name> config set <option> <value>
+  ```
+  예시:
+  ```
+  ceph tell osd.123 config set debug_osd 20
+  ```
+  `tell` 커맨드는 데몬 식별자 와일드카도로도 사용이 가능합니다. 예를 들어, 모든 OSD 데몬에게 디버그 레벨을 적용하려면,
+  ```
+  ceph tell osd.* config set debug_osd 20
+  ```
+2. 프로세스가 실행 중인 프로세스에서, `/var/run/ceph` 의 소켓을 통해 프로세스에 직접 연결할 수도 있습니다.
+  ```
+  ceph daemon <name> config set <option> <value>
+  ```
+  예시:
+  ```
+  ceph daemon osd.4 config set debug_osd 20
+  ```
+
+`ceph config show` 커맨드에서는 덮어쓰여진 일시적인 옵션들이 함께 나온다는 것을 기억하세요.
+
+### VIEWING RUNTIME SETTINGS
+`ceph config show` 명령어로 실행 중인 데몬의 현재 설정을 볼 수 있습니다. 예를 들어:
+```
+ceph config show osd.0
+```
+는 해당 데몬의 기본값이 아닌 옵션들을 보여줄 것입니다. 특정한 옵션을 보려면,
+```
+ceph config show osd.0 debug_osd
+```
+혹은 기본값을 포함한 옵션들을 보려면:
+```
+ceph config show-with-defaults osd.0
+```
+어드민 소켓을 통해 로컬 호스트에서 실행중인 데몬에 접속하여 세팅을 보려면,
+```
+ceph daemon osd.0 config show
+```
+위 명령어는 모든 현재 세팅들을 덤프합니다.
+```
+ceph daemon osd.0 config diff
+```
+위 명령어는 기본값이 아닌 옵션을 보여줍니다. 그리고:
+```
+ceph daemon osd.0 config get debug_osd
+```
+는 특정 옵션의 값만을 보여줍니다.
+
+
+
+
+
+
+
+
+
+
+
+.
