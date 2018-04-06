@@ -96,7 +96,3 @@ $ ceph osd tier set-overlay ecpool hot-storage
 - [ISA erasure code plugin](./1-Table-of-content/3-ISA-erasure-code-plugin/README.md)
 - [Locally repairable erasure code plugin](./1-Table-of-content/4-Locally-repairable-erasure-code/README.md)
 - [SHEC erasure code plugin](./1-Table-of-content/5-SHEC-erasure-code-plugin/README.md)
-
-
-
-.
