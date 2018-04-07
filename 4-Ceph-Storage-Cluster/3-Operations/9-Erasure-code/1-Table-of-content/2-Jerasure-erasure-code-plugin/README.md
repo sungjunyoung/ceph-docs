@@ -2,7 +2,7 @@
 
 jerasure plugin 은 가장 일반적이고 유연한 플러그인이며, Ceph ec pool 의 기본 플러그인이기도 합니다.
 
-jerasure plugin 은 [Jerasure] 라이브러리를 캡슐화한 것입니다. 매개변수에 대해 더 자세히 알고 싶다면, jerasure documenation 을 읽는 것을 추천합니다.
+jerasure plugin 은 [Jerasure](../../Appendix/Jerasure/README.md) 라이브러리를 캡슐화한 것입니다. 매개변수에 대해 더 자세히 알고 싶다면, jerasure documenation 을 읽는 것을 추천합니다.
 
 ## CREATE A JERASURE PROFILE
 
