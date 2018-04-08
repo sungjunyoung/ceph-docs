@@ -60,7 +60,7 @@
 
 ## THE CURRENT STATE OF THE ART
 - MDS (Maximum Distance Separable) code
-- k = 1 이라고 할때, MDS 코드는 단일 코딩 블록 당 k - 1 의 연산을 수행한다.
+- MDS 는 k = 1 이라고 할때 최적의 연산을 수행하며, k > 1 일때, 단일 코딩 블록 당 k - 1 의 연산을 수행한다.
 - 이 연산들은 XOR 연산 (fast)으로 이루어지고, 두번째 연산은 XOR 연산보다 비싼 Galois Field multiplication 으로 이루어진다.
 - m = 1 인 RAID 5 에서, MDS 코드가 최적이고, 디스크 어레이 시스템에서 메인으로 쓰여진다. m = 2, m = 3 일때 다른 코딩 방식들이 나타남. (EVENODD, STAR) 하지만 최적은 아니엿음
 - 1999 년에, m = 2 에서 k + 2 연산을 수행하는 X-Code 가 나왔다.
@@ -74,6 +74,8 @@
 
 ---
 # 3. Jerasure code
+- Ceph 에서는 jerasure 플러그인을 만들 때, (jerasure_init) w 를 매개변수로 받지 않음. 코드 상에서는, `w = {4,8,16,32}` 로 주어 init 을 실행함
+
 ## encoder.c
 ```cpp
 switch(tech) {
