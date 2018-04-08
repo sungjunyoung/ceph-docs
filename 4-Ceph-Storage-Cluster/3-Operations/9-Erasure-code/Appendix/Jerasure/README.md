@@ -79,39 +79,39 @@
 ## encoder.c
 ```cpp
 switch(tech) {
-		case No_Coding:
-			break;
-		case Reed_Sol_Van:
-			matrix = reed_sol_vandermonde_coding_matrix(k, m, w);
-			break;
-		case Reed_Sol_R6_Op:
-			break;
-		case Cauchy_Orig:
-			matrix = cauchy_original_coding_matrix(k, m, w);
-			bitmatrix = jerasure_matrix_to_bitmatrix(k, m, w, matrix);
-			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
-			break;
-		case Cauchy_Good:
-			matrix = cauchy_good_general_coding_matrix(k, m, w);
-			bitmatrix = jerasure_matrix_to_bitmatrix(k, m, w, matrix);
-			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
-			break;
-		case Liberation:
-			bitmatrix = liberation_coding_bitmatrix(k, w);
-			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
-			break;
-		case Blaum_Roth:
-			bitmatrix = blaum_roth_coding_bitmatrix(k, w);
-			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
-			break;
-		case Liber8tion:
-			bitmatrix = liber8tion_coding_bitmatrix(k);
-			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
-			break;
-		case RDP:
-		case EVENODD:
-			assert(0);
-	}
+	case No_Coding:
+		break;
+	case Reed_Sol_Van:
+		matrix = reed_sol_vandermonde_coding_matrix(k, m, w);
+		break;
+	case Reed_Sol_R6_Op:
+		break;
+	case Cauchy_Orig:
+		matrix = cauchy_original_coding_matrix(k, m, w);
+		bitmatrix = jerasure_matrix_to_bitmatrix(k, m, w, matrix);
+		schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+		break;
+	case Cauchy_Good:
+		matrix = cauchy_good_general_coding_matrix(k, m, w);
+		bitmatrix = jerasure_matrix_to_bitmatrix(k, m, w, matrix);
+		schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+		break;
+	case Liberation:
+		bitmatrix = liberation_coding_bitmatrix(k, w);
+		schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+		break;
+	case Blaum_Roth:
+		bitmatrix = blaum_roth_coding_bitmatrix(k, w);
+		schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+		break;
+	case Liber8tion:
+		bitmatrix = liber8tion_coding_bitmatrix(k);
+		schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+		break;
+	case RDP:
+	case EVENODD:
+		assert(0);
+}
 ```
 
 ## decoder.c
