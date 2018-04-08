@@ -31,7 +31,7 @@ ceph osd erasure-code-profile set {name} \
   - Required: Yes.
   - Example: 2
 - technique={reed_sol_van|reed_sol_r6_op|cauchy_orig|cauchy_good|liberation|blaum_roth|liber8tion}
-  - Description: 가장 유연한 테크닉은 `reed_sol_van` 입니다: k, m 을 세팅하는 것으로 충분합니다. `cauchy_good` 테크닉은 더 빠를 수 있지만, packetsize 를 조심스럽게 선택해야 합니다. 다른 테크닉들은 RAID6 와 동일하며, m=2 일때만 설정할 수 있습니다.
+  - Description: 가장 유연한 테크닉은 `reed_sol_van` 입니다: k, m 을 세팅하는 것으로 충분합니다. `cauchy_good` 테크닉은 더 빠를 수 있지만, packetsize 를 조심스럽게 선택해야 합니다. reed_sol_r6_op, liberation, blaum_roth, liber8tion 은 RAID6 와 동일하며, m=2 일때만 설정할 수 있습니다.
   - Type: String
   - Required: No.
   - Example: reed_sol_van
