@@ -29,9 +29,6 @@
   - 얼마나 많은 디스크가 fail 될 수 있는지 지정
   - m * l(?) / k 로 계산되며, 이 그 이상의 디스크가 fail 일 시에는 데이터 손실을 일으킨다.
 - Single disk failure 에서의 성능은 비슷
+- 애초에 Ceph 의 Erasure code plugin 으로서 만들어졌음
 
 ![shec-ceph](/Images/shec-ceph.png)
-
-
-
-.
