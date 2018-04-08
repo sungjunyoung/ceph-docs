@@ -78,7 +78,7 @@ SHEC(4,2,2) -> SHEC(4,3,2) : 복구 효율성 증가
 
 ## ERASURE CODE PROFILE EXAMPLE
 ```
-$ ceph osd erasure-code-profile set SHECprofile \
+$ ceph osd erasure-code-profile set SHEC profile \
      plugin=shec \
      k=8 m=4 c=3 \
      crush-failure-domain=host

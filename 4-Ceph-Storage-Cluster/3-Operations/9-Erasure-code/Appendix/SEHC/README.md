@@ -1,7 +1,7 @@
 > 참고자료들
 > Shingled Erasure Code (SHEC) slideshare: https://www.slideshare.net/miyamae1994/shec-hotdep14-slides021slideshare
 
-# Shingled Erasure Code (SHEC) slideshare
+# 1. Shingled Erasure Code (SHEC) slideshare
 - Reed Solomon code 는 recovery-efficient 하지 않다.
 - 데이터 복구는 가능한 빨라야 한다. - multiple disk failure / data loss 를 피하기 위해
 - Reed Solomon code 는 local parity methods 방법으로 향상되었다.

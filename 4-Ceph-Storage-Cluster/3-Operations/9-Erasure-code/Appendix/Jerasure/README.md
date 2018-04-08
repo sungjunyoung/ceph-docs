@@ -1,6 +1,7 @@
 > 참고자료들
 > 1. Jerasure documenation: http://jerasure.org/jerasure-2.0/
 > 2. Optimizing Cauchy Reed-Solomon Codes for Fault-Tolerant Storage Application: http://web.eecs.utk.edu/~plank/plank/papers/CS-05-569.pdf
+> 3. Jerasure code: http://lab.jerasure.org/jerasure/jerasure
 
 # 1. Jerasure
 
@@ -54,7 +55,7 @@
 
 ---
 
-# Optimizing Cauchy Reed-Solomon Codes for Fault-Tolerant Storage Applications
+# 2. Optimizing Cauchy Reed-Solomon Codes for Fault-Tolerant Storage Applications
 > 참고:  http://web.eecs.utk.edu/~plank/plank/papers/CS-05-569.pdf
 
 ## THE CURRENT STATE OF THE ART
@@ -70,3 +71,73 @@
   - 둘째로 Cauchy distribution matrix 를 사용함으로서 디코딩을 위한 matrix inversion (역행렬) 연산이 최적화됨
   - 이제는 CRS 코딩이 일반적인 MDS erasure coding 으로 자리잡음
 - MSD 코드가 아닌것들에는 HoVer, WEAVER 코드가 있음
+
+---
+# 3. Jerasure code
+## encoder.c
+```cpp
+switch(tech) {
+		case No_Coding:
+			break;
+		case Reed_Sol_Van:
+			matrix = reed_sol_vandermonde_coding_matrix(k, m, w);
+			break;
+		case Reed_Sol_R6_Op:
+			break;
+		case Cauchy_Orig:
+			matrix = cauchy_original_coding_matrix(k, m, w);
+			bitmatrix = jerasure_matrix_to_bitmatrix(k, m, w, matrix);
+			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+			break;
+		case Cauchy_Good:
+			matrix = cauchy_good_general_coding_matrix(k, m, w);
+			bitmatrix = jerasure_matrix_to_bitmatrix(k, m, w, matrix);
+			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+			break;
+		case Liberation:
+			bitmatrix = liberation_coding_bitmatrix(k, w);
+			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+			break;
+		case Blaum_Roth:
+			bitmatrix = blaum_roth_coding_bitmatrix(k, w);
+			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+			break;
+		case Liber8tion:
+			bitmatrix = liber8tion_coding_bitmatrix(k);
+			schedule = jerasure_smart_bitmatrix_to_schedule(k, m, w, bitmatrix);
+			break;
+		case RDP:
+		case EVENODD:
+			assert(0);
+	}
+```
+
+## decoder.c
+```cpp
+switch(tech) {
+  case No_Coding:
+    break;
+  case Reed_Sol_Van:
+    matrix = reed_sol_vandermonde_coding_matrix(k, m, w);
+    break;
+  case Reed_Sol_R6_Op:
+    matrix = reed_sol_r6_coding_matrix(k, w);
+    break;
+  case Cauchy_Orig:
+    matrix = cauchy_original_coding_matrix(k, m, w);
+    bitmatrix = jerasure_matrix_to_bitmatrix(k, m, w, matrix);
+    break;
+  case Cauchy_Good:
+    matrix = cauchy_good_general_coding_matrix(k, m, w);
+    bitmatrix = jerasure_matrix_to_bitmatrix(k, m, w, matrix);
+    break;
+  case Liberation:
+    bitmatrix = liberation_coding_bitmatrix(k, w);
+    break;
+  case Blaum_Roth:
+    bitmatrix = blaum_roth_coding_bitmatrix(k, w);
+    break;
+  case Liber8tion:
+    bitmatrix = liber8tion_coding_bitmatrix(k);
+}
+```
