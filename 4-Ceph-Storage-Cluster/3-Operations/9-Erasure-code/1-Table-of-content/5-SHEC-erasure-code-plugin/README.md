@@ -1,6 +1,6 @@
 # SHEC ERASURE CODE PLUGIN
 
-shec plugin 은 [isa](../../Appendix/multiple-SHEC/README.md) 라이브러리를 캡슐화한 것입니다. Reed Solomon code 보다 더 효율적으로 Ceph의 데이터를 복구할 수 있습니다.
+shec plugin 은 [isa](../../Appendix/SHEC/README.md) 라이브러리를 캡슐화한 것입니다. Reed Solomon code 보다 더 효율적으로 Ceph의 데이터를 복구할 수 있습니다.
 
 ## CREATE AN SHEC PROFILE
 
